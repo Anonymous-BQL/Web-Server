@@ -1,17 +1,22 @@
 package io.github.bianql.servletApi;
 
+import io.github.bianql.servletHelper.ApplicationRequest;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 public class Request implements HttpServletRequest {
+    private ApplicationRequest request;
+
+    public Request(ApplicationRequest request) {
+        this.request = request;
+    }
+
     @Override
     public String getAuthType() {
         return null;
@@ -19,57 +24,57 @@ public class Request implements HttpServletRequest {
 
     @Override
     public Cookie[] getCookies() {
-        return new Cookie[0];
+        return request.getCookies();
     }
 
     @Override
-    public long getDateHeader(String s) {
-        return 0;
+    public long getDateHeader(String name) {
+        return request.getDateHeader(name);
     }
 
     @Override
-    public String getHeader(String s) {
-        return null;
+    public String getHeader(String name) {
+        return request.getHeader(name);
     }
 
     @Override
-    public Enumeration<String> getHeaders(String s) {
-        return null;
+    public Enumeration<String> getHeaders(String name) {
+        return Collections.enumeration(request.getHeaders(name));
     }
 
     @Override
     public Enumeration<String> getHeaderNames() {
-        return null;
+        return Collections.enumeration(request.getHeaderNames());
     }
 
     @Override
     public int getIntHeader(String s) {
-        return 0;
+        return Integer.parseInt(request.getHeader(s));
     }
 
     @Override
     public String getMethod() {
-        return null;
+        return request.getMethod();
     }
 
     @Override
     public String getPathInfo() {
-        return null;
+        return request.getPathInfo();
     }
 
     @Override
     public String getPathTranslated() {
-        return null;
+        return request.getPathTranslated();
     }
 
     @Override
     public String getContextPath() {
-        return null;
+        return request.getContextPath();
     }
 
     @Override
     public String getQueryString() {
-        return null;
+        return request.getQueryString();
     }
 
     @Override
@@ -89,202 +94,206 @@ public class Request implements HttpServletRequest {
 
     @Override
     public String getRequestedSessionId() {
-        return null;
+        return request.getSessionId();
     }
 
     @Override
     public String getRequestURI() {
-        return null;
+        return request.getRequestURI();
     }
 
     @Override
     public StringBuffer getRequestURL() {
-        return null;
+        return request.getRequestURL();
     }
 
     @Override
     public String getServletPath() {
-        return null;
+        return request.getServletPath();
     }
 
     @Override
-    public HttpSession getSession(boolean b) {
-        return null;
+    public HttpSession getSession(boolean allowGenerate) {
+        return request.getSession(allowGenerate);
     }
 
     @Override
     public HttpSession getSession() {
-        return null;
+        return getSession(true);
     }
 
     @Override
     public String changeSessionId() {
-        return null;
+        throw new RuntimeException("不支持该操作！");
     }
 
     @Override
     public boolean isRequestedSessionIdValid() {
-        return false;
+        return getRequestedSessionId() != null && getSession(false) == null;
     }
 
     @Override
     public boolean isRequestedSessionIdFromCookie() {
-        return false;
+        return request.isSessionIdFromCookie();
     }
 
     @Override
     public boolean isRequestedSessionIdFromURL() {
-        return false;
+        return request.isSessionIdFromURL();
     }
 
     @Override
     public boolean isRequestedSessionIdFromUrl() {
-        return false;
+        return isRequestedSessionIdFromURL();
     }
 
     @Override
     public boolean authenticate(HttpServletResponse httpServletResponse) throws IOException, ServletException {
-        return false;
+        throw new RuntimeException("不支持authenticate操作");
     }
 
     @Override
     public void login(String s, String s1) throws ServletException {
-
+        throw new RuntimeException("不支持login操作");
     }
 
     @Override
     public void logout() throws ServletException {
-
+        throw new RuntimeException("不支持logout操作");
     }
 
     @Override
     public Collection<Part> getParts() throws IOException, ServletException {
-        return null;
+        throw new RuntimeException("不支持该操作");
     }
 
     @Override
     public Part getPart(String s) throws IOException, ServletException {
-        return null;
+        throw new RuntimeException("不支持该操作");
     }
 
     @Override
     public <T extends HttpUpgradeHandler> T upgrade(Class<T> aClass) throws IOException, ServletException {
-        return null;
+        return request.upgrade(aClass);
     }
 
     @Override
-    public Object getAttribute(String s) {
-        return null;
+    public Object getAttribute(String name) {
+        return request.getAttribute(name);
     }
 
     @Override
     public Enumeration<String> getAttributeNames() {
-        return null;
+        return Collections.enumeration(request.getAttributeNames());
     }
 
     @Override
     public String getCharacterEncoding() {
-        return null;
+        return request.getCharacterEncoding();
     }
 
     @Override
     public void setCharacterEncoding(String s) throws UnsupportedEncodingException {
-
+        request.setCharacterEncoding(s);
     }
 
     @Override
     public int getContentLength() {
-        return 0;
+        return request.getContentLength();
     }
 
     @Override
     public long getContentLengthLong() {
-        return 0;
+        return request.getContentLengthLong();
     }
 
     @Override
     public String getContentType() {
-        return null;
+        return request.getContentType();
     }
 
     @Override
     public ServletInputStream getInputStream() throws IOException {
-        return null;
+        throw new RuntimeException("不支持该操作");
     }
 
     @Override
-    public String getParameter(String s) {
-        return null;
+    public String getParameter(String name) {
+        return request.getParameter(name);
     }
 
     @Override
     public Enumeration<String> getParameterNames() {
-        return null;
+        return Collections.enumeration(request.getParameterNames());
     }
 
     @Override
-    public String[] getParameterValues(String s) {
-        return new String[0];
+    public String[] getParameterValues(String name) {
+        return request.getParameterValues(name);
     }
 
     @Override
     public Map<String, String[]> getParameterMap() {
-        return null;
+        return request.getParameterMap();
+    }
+
+    public ApplicationRequest getRequest() {
+        return request;
     }
 
     @Override
     public String getProtocol() {
-        return null;
+        return request.getProtocol();
     }
 
     @Override
     public String getScheme() {
-        return null;
+        return request.getScheme();
     }
 
     @Override
     public String getServerName() {
-        return null;
+        return request.getServerName();
     }
 
     @Override
     public int getServerPort() {
-        return 0;
+        return request.getLocalPort();
     }
 
     @Override
     public BufferedReader getReader() throws IOException {
-        return null;
+        throw new RuntimeException("不支持该操作");
     }
 
     @Override
     public String getRemoteAddr() {
-        return null;
+        return request.getRemoteAddr();
     }
 
     @Override
     public String getRemoteHost() {
-        return null;
+        return request.getRemoteHost();
     }
 
     @Override
-    public void setAttribute(String s, Object o) {
-
+    public void setAttribute(String name, Object value) {
+        request.setAttribute(name, value);
     }
 
     @Override
-    public void removeAttribute(String s) {
-
+    public void removeAttribute(String name) {
+        request.removeAttribute(name);
     }
 
     @Override
     public Locale getLocale() {
-        return null;
+        return request.getLocale();
     }
 
     @Override
     public Enumeration<Locale> getLocales() {
-        return null;
+        return Collections.enumeration(request.getLocales());
     }
 
     @Override
@@ -293,48 +302,48 @@ public class Request implements HttpServletRequest {
     }
 
     @Override
-    public RequestDispatcher getRequestDispatcher(String s) {
-        return null;
+    public RequestDispatcher getRequestDispatcher(String url) {
+        return request.getRequestDispatcher(url);
     }
 
     @Override
-    public String getRealPath(String s) {
-        return null;
+    public String getRealPath(String url) {
+        return request.getRealPath(url);
     }
 
     @Override
     public int getRemotePort() {
-        return 0;
+        return request.getRemotePort();
     }
 
     @Override
     public String getLocalName() {
-        return null;
+        return request.getLocalName();
     }
 
     @Override
     public String getLocalAddr() {
-        return null;
+        return request.getLocalAddr();
     }
 
     @Override
     public int getLocalPort() {
-        return 0;
+        return request.getLocalPort();
     }
 
     @Override
     public ServletContext getServletContext() {
-        return null;
+        return request.getServletContext();
     }
 
     @Override
     public AsyncContext startAsync() throws IllegalStateException {
-        return null;
+        throw new RuntimeException("不支持该操作");
     }
 
     @Override
     public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse) throws IllegalStateException {
-        return null;
+        throw new RuntimeException("不支持该操作");
     }
 
     @Override
@@ -349,11 +358,11 @@ public class Request implements HttpServletRequest {
 
     @Override
     public AsyncContext getAsyncContext() {
-        return null;
+        throw new RuntimeException("不支持该操作");
     }
 
     @Override
     public DispatcherType getDispatcherType() {
-        return null;
+        return request.getDispatcherType();
     }
 }
