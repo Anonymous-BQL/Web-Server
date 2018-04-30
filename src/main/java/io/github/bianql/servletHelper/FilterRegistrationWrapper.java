@@ -19,7 +19,8 @@ public class FilterRegistrationWrapper {
     private ApplicationContext applicationContext;
     private Class filterClass;
     private Filter filter;
-    public static class FilterMap{
+
+    public static class FilterMap {
         private EnumSet<DispatcherType> dispatcherTypes;
         private List<String> servletNames;
         private List<String> urlPatterns;
@@ -33,6 +34,9 @@ public class FilterRegistrationWrapper {
         }
 
         public EnumSet<DispatcherType> getDispatcherTypes() {
+            if (dispatcherTypes.isEmpty()) {
+                return EnumSet.of(DispatcherType.REQUEST);
+            }
             return dispatcherTypes;
         }
 
@@ -41,7 +45,7 @@ public class FilterRegistrationWrapper {
         }
 
         public List<String> getServletNames() {
-            if(CollectionUtils.isEmpty(servletNames)){
+            if (CollectionUtils.isEmpty(servletNames)) {
                 return Collections.emptyList();
             }
             return servletNames;
@@ -52,7 +56,7 @@ public class FilterRegistrationWrapper {
         }
 
         public List<String> getUrlPatterns() {
-            if(CollectionUtils.isEmpty(urlPatterns))
+            if (CollectionUtils.isEmpty(urlPatterns))
                 return Collections.emptyList();
             return urlPatterns;
         }
@@ -85,22 +89,25 @@ public class FilterRegistrationWrapper {
     public FilterConfig getFilterConfig() {
         return new ApplicationFilterConfig(filterName, applicationContext.getServletContext(), initParameters);
     }
-    public void addMapping(EnumSet<DispatcherType> dispatcherTypes,List<String> servletNames,List<String> urlPatterns,boolean isMatchAfter){
-        mapping.add(new FilterMap(dispatcherTypes,servletNames,urlPatterns,isMatchAfter));
+
+    public void addMapping(EnumSet<DispatcherType> dispatcherTypes, List<String> servletNames, List<String> urlPatterns, boolean isMatchAfter) {
+        mapping.add(new FilterMap(dispatcherTypes, servletNames, urlPatterns, isMatchAfter));
     }
+
     public Collection<String> getServletNameMappings() {
         Collection<String> servletNames = new HashSet<>();
         mapping.forEach(filterMap -> {
-            if(!CollectionUtils.isEmpty(filterMap.getServletNames())){
+            if (!CollectionUtils.isEmpty(filterMap.getServletNames())) {
                 servletNames.addAll(filterMap.getServletNames());
             }
         });
         return servletNames;
     }
+
     public Collection<String> getUrlPatternMappings() {
         Collection<String> urlPatterns = new HashSet<>();
         mapping.forEach(filterMap -> {
-            if(!CollectionUtils.isEmpty(filterMap.getUrlPatterns())){
+            if (!CollectionUtils.isEmpty(filterMap.getUrlPatterns())) {
                 urlPatterns.addAll(filterMap.getUrlPatterns());
             }
         });
@@ -118,6 +125,7 @@ public class FilterRegistrationWrapper {
     public Map<String, String> getInitParameters() {
         return initParameters;
     }
+
     public String getInitParameter(String key) {
         return initParameters.get(key);
     }
@@ -152,6 +160,7 @@ public class FilterRegistrationWrapper {
         initParameters.put(name, value);
         return true;
     }
+
     public boolean isAsyncSupported() {
         return asyncSupported;
     }
@@ -177,16 +186,16 @@ public class FilterRegistrationWrapper {
     }
 
     public Filter getFilter() {
-        if(filter!=null)
-        return filter;
-        if(filterClass!=null){
+        if (filter != null)
+            return filter;
+        if (filterClass != null) {
             try {
                 return applicationContext.getServletContext().createFilter(filterClass);
             } catch (ServletException e) {
                 e.printStackTrace();
             }
         }
-        if(className!=null){
+        if (className != null) {
             try {
                 return applicationContext.getServletContext().createFilter((Class<Filter>) applicationContext.getClassLoader().loadClass(className));
             } catch (ServletException e) {

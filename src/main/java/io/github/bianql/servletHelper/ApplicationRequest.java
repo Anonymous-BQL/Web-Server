@@ -251,7 +251,7 @@ public class ApplicationRequest {
                 e.printStackTrace();
             }
             if (getMethod().equals(HttpMethod.POST.name())) {
-                HttpParser.parseParameters(body);
+                HttpParser.parseParameters(body).forEach(this::addParameter);
             }
             isFinish = true;
         }
@@ -354,7 +354,14 @@ public class ApplicationRequest {
         if (response.isCommitted()) {
             throw new RuntimeException("该请求已经被处理！");
         }
-        return new ApplicationDispatcher(applicationContext.getServletMapper(), url, null, this);
+        if (StringUtils.isEmpty(url)) {
+            url = "/";
+        }
+        String queryString = null;
+        if (url.indexOf("?") > 0) {
+            queryString = url.substring(url.indexOf("?") + 1);
+        }
+        return new ApplicationDispatcher(applicationContext.getServletMapper(), url, queryString, this);
     }
 
     public String getRealPath(String url) {

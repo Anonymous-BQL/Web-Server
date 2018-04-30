@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class ApplicationFilterChain implements FilterChain {
     private ArrayList<Filter> filters = new ArrayList<>();
-    private int currentFilterIndex = 0;
+    private int currentFilterIndex = -1;
     private Servlet servlet;
 
     public ApplicationFilterChain(Servlet servlet) {
@@ -15,13 +15,15 @@ public class ApplicationFilterChain implements FilterChain {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse) throws IOException, ServletException {
-        if(currentFilterIndex < filters.size()){
-            filters.get(currentFilterIndex).doFilter(servletRequest,servletResponse,this);
-        }else {
-            servlet.service(servletRequest,servletResponse);
+        currentFilterIndex++;
+        if (currentFilterIndex < filters.size()) {
+            filters.get(currentFilterIndex).doFilter(servletRequest, servletResponse, this);
+        } else {
+            servlet.service(servletRequest, servletResponse);
         }
     }
-    public void addFilter(Filter filter){
+
+    public void addFilter(Filter filter) {
         filters.add(filter);
     }
 }

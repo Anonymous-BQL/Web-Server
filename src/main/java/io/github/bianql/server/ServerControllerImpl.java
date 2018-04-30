@@ -7,13 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import io.github.bianql.executor.ExecutorFactory;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 @Component
 public class ServerControllerImpl implements ServerController {
     private ServerLogger logger;
     private ServerConfig serverConfig;
     private WebServerManager webServer;
+    private AtomicBoolean isRuning = new AtomicBoolean(false);
+
     @Autowired
-    public ServerControllerImpl(ServerLogger logger, ServerConfig serverConfig, WebServerManager webServer){
+    public ServerControllerImpl(ServerLogger logger, ServerConfig serverConfig, WebServerManager webServer) {
         this.logger = logger;
         this.serverConfig = serverConfig;
         this.webServer = webServer;
@@ -45,13 +49,23 @@ public class ServerControllerImpl implements ServerController {
 
     @Override
     public void shutdown() {
+        if (!isRuning.get()) {
+            logger.error("web服务器未启动，拒绝关闭操作！");
+            return;
+        }
         logger.info("准备关闭web服务器");
         webServer.shutdown();
+        isRuning.compareAndSet(true, false);
     }
 
     @Override
     public void start() {
+        if (isRuning.get()) {
+            logger.error("web服务器已经启动，拒绝本次操作！");
+            return;
+        }
         logger.info("准备启动web服务器");
+        isRuning.compareAndSet(false, true);
         webServer.init();
         webServer.start();
     }

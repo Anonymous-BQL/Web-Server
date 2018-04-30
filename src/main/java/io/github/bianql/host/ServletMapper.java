@@ -24,6 +24,7 @@ public class ServletMapper {
     }
 
     public void initOnStartup() {
+        servlets.forEach(ServletRegistrationWrapper::getServlet);
         servlets.stream()
                 .filter(servletRegistrationWrapper -> servletRegistrationWrapper.getLoadOnStartup() > 0)
                 .sorted(Comparator.comparing(ServletRegistrationWrapper::getLoadOnStartup))

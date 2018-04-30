@@ -89,13 +89,14 @@ public class SocketProcessor implements Runnable {
         try {
             //根据协议，相应客户端
             byte[] body = applicationResponse.getBodyBytes();
-            byte[] header = null;
+            byte[] header;
             if (!applicationResponse.isCommitted()) {
-                applicationResponse.setHeader("Content-Length", String.valueOf(body.length));
+                applicationResponse.setContentLength(body.length);
                 header = applicationResponse.getHeaderBytes();
                 applicationResponse.sendToClient(header);
             }
-            applicationResponse.sendToClient(new String(body).getBytes());
+            if (body.length > 0)
+                applicationResponse.sendToClient(body);
             closeSocket();
         } catch (Exception e) {
             //抛弃服务器自身处理异常

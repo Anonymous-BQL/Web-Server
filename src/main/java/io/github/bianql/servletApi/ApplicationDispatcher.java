@@ -33,14 +33,15 @@ public class ApplicationDispatcher implements RequestDispatcher {
 
     @Override
     public void forward(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException, IOException {
-        if(applicationRequest == null){
-            applicationRequest = ((Request)servletRequest).getRequest();
+        if (applicationRequest == null) {
+            applicationRequest = ((Request) servletRequest).getRequest();
         }
         applicationRequest.setDispatcherType(DispatcherType.FORWARD);
         if (servletName != null) {
             servletMapper.getFilterChainByServletName(servletName, DispatcherType.FORWARD).doFilter(servletRequest, servletResponse);
         } else if (!StringUtils.isEmpty(url)) {
             //根据query填充parameter
+            applicationRequest.setUrl(url);
             fillParameter();
             servletMapper.getFilterChainByUrl(url, DispatcherType.FORWARD).doFilter(servletRequest, servletResponse);
         }
@@ -48,14 +49,15 @@ public class ApplicationDispatcher implements RequestDispatcher {
 
     @Override
     public void include(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException, IOException {
-        if(applicationRequest == null){
-            applicationRequest = ((Request)servletRequest).getRequest();
+        if (applicationRequest == null) {
+            applicationRequest = ((Request) servletRequest).getRequest();
         }
         applicationRequest.setDispatcherType(DispatcherType.INCLUDE);
         if (servletName != null) {
             servletMapper.getFilterChainByServletName(servletName, DispatcherType.INCLUDE).doFilter(servletRequest, servletResponse);
         } else if (!StringUtils.isEmpty(url)) {
             //根据query填充parameter
+            applicationRequest.setUrl(url);
             fillParameter();
             servletMapper.getFilterChainByUrl(url, DispatcherType.INCLUDE).doFilter(servletRequest, servletResponse);
         }

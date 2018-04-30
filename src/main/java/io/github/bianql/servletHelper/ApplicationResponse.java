@@ -65,7 +65,12 @@ public class ApplicationResponse {
 
     public byte[] getHeaderBytes() {
         if (!StringUtils.isEmpty(sessionId)) {
-            addCookie(SessionManager.createSessionCookie(applicationContext, sessionId, false));
+            if (applicationContext != null)
+                addCookie(SessionManager.createSessionCookie(applicationContext, sessionId, false));
+        }
+        String contentType = getContentType();
+        if (contentType.contains("text") && !contentType.contains("charset")) {
+            setContentType(contentType + "; charset=utf-8");
         }
         //解析头部并输出
         out.writeHeader((protocol + " " + status + " " + message + "\r\n").getBytes());
@@ -114,8 +119,13 @@ public class ApplicationResponse {
             return;
         }
         isAppCommited = true;
+        if (StringUtils.isEmpty(url))
+            url = "/";
+        if (!url.startsWith("/"))
+            url = "/" + url;
         this.status = HttpServletResponse.SC_FOUND;
-        addHeader("Location", url);
+        addHeader("Location", applicationContext.getContextPath() + url);
+        setHeader("Content-Length", "0");
         sendToClient(getHeaderBytes());
     }
 

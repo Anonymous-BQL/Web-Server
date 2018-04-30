@@ -62,6 +62,7 @@ public class HttpParser {
                 request.setBody(reader.readLine().getBytes());
             }
         } catch (Exception e) {
+            e.printStackTrace();
             try {
                 socket.close();
             } catch (IOException e1) {
@@ -123,9 +124,23 @@ public class HttpParser {
                 request.setSessionIdFormCookie(true);
                 request.setSessionId(c[1]);
             }
-            cookieList.add(new Cookie(c[0], c[1]));
+            if (isToken(c[0]))
+                cookieList.add(new Cookie(c[0], c[1]));
         });
         request.setCookies(cookieList.toArray(new Cookie[cookieList.size()]));
+    }
+
+    private static boolean isToken(String value) {
+        int len = value.length();
+        String illegalString = "/()<>@,;:\\\"[]?={} \t";
+        for (int i = 0; i < len; ++i) {
+            char c = value.charAt(i);
+            if (c < ' ' || c >= 127 || illegalString.indexOf(c) != -1) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 }
