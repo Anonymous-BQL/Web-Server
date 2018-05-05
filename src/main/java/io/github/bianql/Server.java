@@ -23,6 +23,7 @@ public class Server {
         this.serverConfig = serverConfig;
     }
 
+    //等待外部指令
     private void prepare() {
 
         ServerSocket server = null;
@@ -30,6 +31,7 @@ public class Server {
             server = new ServerSocket(serverConfig.getServerPort());
         } catch (IOException e) {
             e.printStackTrace();
+            throw new RuntimeException("服务器端口号配置错误！");
         }
         while (true) {
             Socket socket = null;
@@ -46,7 +48,7 @@ public class Server {
                     if (socket != null)
                         socket.close();
                 } catch (IOException e1) {
-                    e1.printStackTrace();
+                    //丢弃关闭异常
                 }
             }
 

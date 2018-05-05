@@ -62,11 +62,11 @@ public class HttpParser {
                 request.setBody(reader.readLine().getBytes());
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            //丢弃解析异常
             try {
                 socket.close();
             } catch (IOException e1) {
-                e1.printStackTrace();
+                //丢弃关闭socket异常
             }
             return false;
         }

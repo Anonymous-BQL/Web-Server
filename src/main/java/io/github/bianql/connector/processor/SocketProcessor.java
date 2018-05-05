@@ -62,8 +62,7 @@ public class SocketProcessor implements Runnable {
             applicationResponse.setApplicationContext(applicationContext);
             applicationResponse.setHeader("Server", applicationContext.getServletContext().getServerInfo());
         } catch (Exception e) {
-            e.printStackTrace();
-            //抛弃服务器自身异常
+            //抛弃服务器自身处理异常
         }
         try {
             //映射请求并调用Servlet处理
@@ -82,8 +81,7 @@ public class SocketProcessor implements Runnable {
                     }
                 });
             } catch (IOException e1) {
-                e1.printStackTrace();
-                //抛弃服务器自身异常
+                //抛弃服务器处理异常
             }
         }
         try {
@@ -100,7 +98,6 @@ public class SocketProcessor implements Runnable {
             closeSocket();
         } catch (Exception e) {
             //抛弃服务器自身处理异常
-            e.printStackTrace();
         }
     }
 

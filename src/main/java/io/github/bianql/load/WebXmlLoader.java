@@ -19,15 +19,15 @@ public class WebXmlLoader {
         try {
             File webXml = new File(filePath);
             if (!webXml.exists()) {
-                context.getAppLogger().info("web.xml不存在，文件路径：" + webXml.getAbsolutePath());
+                servletContext.log("web.xml不存在，文件路径：" + webXml.getAbsolutePath());
                 return;
             }
             SAXReader reader = new SAXReader();
-            context.getAppLogger().info("开始加载web.xml...");
+            servletContext.log("开始加载web.xml...");
             Document doc = reader.read(webXml);
             Element root = doc.getRootElement();
             if (!root.getName().equals("web-app")) {
-                context.getAppLogger().error("错误的web.xml文件", new RuntimeException("非法文件"));
+                servletContext.log("错误的web.xml文件", new RuntimeException("非法文件"));
             }
             loadContextParam(servletContext, root);
             loadListener(servletContext, root);
@@ -36,7 +36,7 @@ public class WebXmlLoader {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        context.getAppLogger().info("加载web.xml完成.");
+        servletContext.log("加载web.xml完成.");
     }
 
     private static void loadContextParam(ServletContext servletContext, Element element) {
